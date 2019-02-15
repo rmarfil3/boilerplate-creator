@@ -17,7 +17,7 @@ def allow_only(allowed_user_types):
             if user_id:
                 user = ndb.Key(User, int(user_id)).get()
 
-                if user.user_type in allowed_user_types and not user.is_blocked:
+                if user and user.user_type in allowed_user_types and not user.is_blocked:
                     return fn(self, *args, **kwargs)
             self.redirect("/")
         return wrap

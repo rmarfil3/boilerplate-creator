@@ -1,7 +1,7 @@
 from handlers.base import BaseHandler
 from models.user import User
 
-from handlers.decorators import allow_only
+from handlers.public.decorators import allow_only
 
 
 class AdminPage(BaseHandler):
