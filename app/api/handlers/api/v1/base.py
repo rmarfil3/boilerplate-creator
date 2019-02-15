@@ -1,6 +1,6 @@
 import json
 
-from base.handler import BaseHandler
+from handlers.base import BaseHandler
 from libraries.helpers import dict_functions
 
 

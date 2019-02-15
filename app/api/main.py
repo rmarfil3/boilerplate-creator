@@ -9,6 +9,9 @@ from handlers.public.index import IndexPage
 from handlers.public.admin import AdminPage
 from handlers.public.logout import Logout
 
+# api
+from handlers.api.v1.users import UsersApi
+
 config = {
     'webapp2_extras.sessions': {
         'secret_key': '#$sdgfdsre&^)^(":?><',
@@ -28,7 +31,7 @@ api = webapp2.WSGIApplication([
     routes.DomainRoute(r"<:.*>", [
         routes.PathPrefixRoute("/api", [
             routes.PathPrefixRoute("/v1", [
-                webapp2.Route("/", handler=IndexPage, name="api-index")
+                webapp2.Route("/users", handler=UsersApi, name="api-users")
             ])
         ])
     ])

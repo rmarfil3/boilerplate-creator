@@ -3,7 +3,7 @@ from hashlib import sha512
 from google.appengine.ext import ndb
 
 from configs.default import SALT
-from handlers.exceptions import Error
+from handlers.exceptions import Error, model_exceptions
 
 
 class User(ndb.Model):
@@ -91,6 +91,20 @@ class User(ndb.Model):
         user.put()
         return user
 
-    def delete(self):
-        self.deleted = True
-        self.put()
+    @classmethod
+    def delete(cls, id):
+        user = User.custom_query(User.key == ndb.Key(User, int(id))).get()
+        if user:
+            user.deleted = True
+            user.put()
+        else:
+            raise model_exceptions.NDBEntityNotFoundError()
+
+    def to_object(self):
+        return {
+            "username": self.username,
+            "user_type": self.user_type,
+            "is_blocked": self.is_blocked,
+            "created": self.created.isoformat() + "Z",
+            "updated": self.updated.isoformat() + "Z",
+        }
