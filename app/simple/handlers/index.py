@@ -6,7 +6,8 @@ class IndexPage(BaseHandler):
     def get(self, *args, **kwargs):
         if self.session.get("id"):
             self.render_template("html/index.html", {
-                "username": self.session.get("username")
+                "username": self.session.get("username"),
+                "is_admin": self.session.get("user_type") == User.USER_TYPE_ADMIN
             })
 
         else:

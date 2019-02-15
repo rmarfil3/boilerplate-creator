@@ -5,6 +5,8 @@ import webapp2
 
 from webapp2_extras import sessions
 
+from models.user import User
+
 # setup template
 JINJA_ENVIRONMENT = jinja2.Environment(
     loader=jinja2.FileSystemLoader(
@@ -19,6 +21,10 @@ class BaseHandler(webapp2.RequestHandler):
     def __init__(self, request=None, response=None):
         webapp2.RequestHandler.__init__(self, request, response)
         self.session_store = sessions.get_store()
+
+        # user_id = self.session.get("id")
+        # if user_id:
+        #     self.user = User.get_by_id(user_id)
 
     @webapp2.cached_property
     def session(self):
