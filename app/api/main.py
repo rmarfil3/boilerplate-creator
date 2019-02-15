@@ -4,13 +4,25 @@ import webapp2
 from webapp2_extras import routes
 
 # public
+from handlers.public.init import Init
 from handlers.public.index import IndexPage
+from handlers.public.admin import AdminPage
+from handlers.public.logout import Logout
+
+config = {
+    'webapp2_extras.sessions': {
+        'secret_key': '#$sdgfdsre&^)^(":?><',
+    },
+}
 
 app = webapp2.WSGIApplication([
     routes.DomainRoute(r"<:.*>", [
+        webapp2.Route("/init", handler=Init, name="www-init"),
+        webapp2.Route("/admin", handler=AdminPage, name="www-init"),
+        webapp2.Route("/logout", handler=Logout, name="www-logout"),
         webapp2.Route("<:.*>", handler=IndexPage, name="www-index")
     ])
-], debug=True)
+], debug=True, config=config)
 
 api = webapp2.WSGIApplication([
     routes.DomainRoute(r"<:.*>", [
@@ -20,4 +32,4 @@ api = webapp2.WSGIApplication([
             ])
         ])
     ])
-], debug=True)
+], debug=True, config=config)
