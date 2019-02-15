@@ -2,7 +2,7 @@ from hashlib import sha512
 
 from google.appengine.ext import ndb
 
-from configs.default import SALT
+from config.default import SALT
 from handlers.exceptions import Error
 
 
@@ -25,10 +25,10 @@ class User(ndb.Model):
             self.code = "ACCOUNT_BLOCKED"
             self.message = message
 
-    class EmailAlreadyTaken(Error):
-        def __init__(self, message="Email address has already been registered."):
+    class UsernameAlreadyTaken(Error):
+        def __init__(self, message="Username has already been registered."):
             self.status = 409
-            self.code = "EMAIL_ALREADY_TAKEN"
+            self.code = "USERNAME_ALREADY_TAKEN"
             self.message = message
 
     USER_TYPE_ADMIN = "admin"
@@ -42,7 +42,6 @@ class User(ndb.Model):
 
     # Basic info
     username = ndb.StringProperty()
-    email = ndb.StringProperty(required=True)
     password = ndb.StringProperty()  # SHA512
     user_type = ndb.StringProperty(choices=USER_TYPES, default=USER_TYPE_USER)
 
@@ -57,17 +56,17 @@ class User(ndb.Model):
         return cls.query(cls.deleted == False, *args, **kwargs)
 
     def _pre_put_hook(self):
-        self.email = self.email.lower()
+        self.username = self.username.lower()
 
     @classmethod
     def hash_password(cls, password):
         return sha512(SALT + password).hexdigest()
 
     @classmethod
-    def get_user(cls, email, password):
-        email = email.lower()
+    def get_user(cls, username, password):
+        username = username.lower()
 
-        user = User.custom_query(User.email == email, User.password == cls.hash_password(password)).get()
+        user = User.custom_query(User.username == username, User.password == cls.hash_password(password)).get()
         if not user:
             raise User.UnauthenticatedAccess()
 
@@ -78,10 +77,10 @@ class User(ndb.Model):
 
     @classmethod
     def add(cls, *args, **kwargs):
-        email = kwargs.get("email", "").lower()
+        username = kwargs.get("username", "").lower()
 
-        if email and User.custom_query(User.email == email).get(keys_only=True):
-            raise User.EmailAlreadyTaken()
+        if username and User.custom_query(User.username == username).get(keys_only=True):
+            raise User.UsernameAlreadyTaken()
 
         user = User()
 
